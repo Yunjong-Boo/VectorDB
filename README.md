@@ -3,26 +3,26 @@ This project focuses on **graph partitioning techniques** that leverage node con
 
 ## Usage
 1. Clone the Repository
-   ```bash
-       git clone https://github.com/Yunjong-Boo/VectorDB.git
-       cd VectorDB
-   ```
+```bash
+    git clone https://github.com/Yunjong-Boo/VectorDB.git
+    cd VectorDB
+```
 2. Build
-    ```bash
-        mkdir build
-        cd build
-        cmake ..
-        make -j
-    ```
+ ```bash
+     mkdir build
+     cd build
+     cmake ..
+     make -j
+ ```
 3. Dataset Preparation
-    - SIFT1M (bigann링크)
-    - 주의사항: data type에 따라 uint8_t/float 변경 필요
+ - SIFT1M (bigann링크)
+ - 주의사항: data type에 따라 uint8_t/float 변경 필요
 4. Run Graph Conversion
-    ```bash
-    # In build directory
-    ./WeightCalculation <path_to_data_file> <path_to_output_file>
-    ```
+ ```bash
+ # In build directory
+ ./WeightCalculation <path_to_data_file> <path_to_output_file>
+ ```
 5. Graph Partitioning
-   - PuLP(링크)
+- PuLP(링크)
 
 
