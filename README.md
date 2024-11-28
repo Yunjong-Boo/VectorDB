@@ -22,7 +22,7 @@ This project focuses on **graph partitioning techniques** that leverage node con
     1. Access the BIGANN Dataset from the following link: [BIGANN Dataset](http://corpus-texmex.irisa.fr/)
     2. Download the desired dataset files.
    #### Step 2: Build the DiskANN Index
-    [DiskANN](https://github.com/microsoft/DiskANN)
+    Refer to the [DiskANN repository](https://github.com/microsoft/DiskANN) for the indexing framework.
     1. Clone the DiskANN repository from GitHub:
     ```bash
     git clone https://github.com/microsoft/DiskANN.git
