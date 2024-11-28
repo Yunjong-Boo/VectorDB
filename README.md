@@ -16,6 +16,7 @@ This project focuses on **graph partitioning techniques** that leverage node con
  ```
 ### 3. Dataset Preparation
    This project uses the BIGANN Dataset and the DiskANN indexing framework.
+   
    Follow the steps below to prepare the dataset and build the index:
    #### Step 1: Download the BIGANN Dataset
     1. Access the BIGANN Dataset from the following link: [BIGANN Dataset](http://corpus-texmex.irisa.fr/)
