@@ -20,6 +20,7 @@ This project focuses on **graph partitioning techniques** that leverage node con
    Follow the steps below to prepare the dataset and build the index:
    #### Step 1: Download the BIGANN Dataset
     1. Access the BIGANN Dataset from the following link: [BIGANN Dataset](http://corpus-texmex.irisa.fr/)
+    
     2. Download the desired dataset files.
    #### Step 2: Build the DiskANN Index
     Refer to the [DiskANN repository](https://github.com/microsoft/DiskANN) for the indexing framework.
