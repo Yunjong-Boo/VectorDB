@@ -17,10 +17,7 @@ Multiple hardware Navigator modules cooperate over an HBM-aware NoC to achieve h
     Multiple Navigator instances process independent queries in parallel, scaling throughput linearly with the number of Navigators.
 
   * HBM-Aware NoC between Navigators and Multi-Channel HBM  
-    A lightweight FPGA-friendly NoC connects Navigators to HBM channels, sustaining random, many-to-many traffic without throughput collapse. :contentReference[oaicite:0]{index=0}
-
-  * Dataset-Validated Performance (SIFT / SPACEV)  
-    On SIFT and SPACEV datasets, the full-FPGA design achieves up to XXX K QPS while maintaining target recall.
+    A lightweight FPGA-friendly NoC connects Navigators to HBM channels, sustaining random, many-to-many traffic without throughput collapse.
 
 * * *
 
@@ -29,28 +26,28 @@ Multiple hardware Navigator modules cooperate over an HBM-aware NoC to achieve h
 ### Search Modules
 
   * Distance Engine  
-    Computes vector distances with a deeply pipelined fixed-point or low-precision arithmetic unit.
-    The design is dimension-parameterizable (e.g., 128 / 256-D) and matched to HBM burst size.
+    - Receives query vector beats from the NoC, aligns them per context, and reads matching resident vectors from on-chip memory.  
+    - Computes lane-wise distance, accumulates over all beats of a vector in a pipelined fashion, and outputs the final L2-squared distance per job/context.
 
   * Priority Queue Module  
-    Maintains candidate nodes and top-k results using a hardware-friendly heap or partial sorter.
-    Supports configurable `k` and search-list size.
+    - BRAM-backed min–max heap that stores `(key, id)` pairs
+    - Used as a hardware-friendly priority queue for managing candidate lists and top-k results in the search pipeline.
 
   * HBM Interface  
-    Wraps the vendor HBM IP and exposes a clean request–response interface (ID, address, length).
-    Aggregates burst accesses and aligns them to HBM channel/bank boundaries.
-
+    - Collects load requests from the search pipeline (Navigator IDs + addresses), queues them, and issues AXI4 read bursts to HBM with proper `arlen/arsize` selection for vector and neighbor packets.  
+    - Return `rdata` beats with the original Navigator context, repack them into fixed-size packets, and stream them back into the NoC as `{dest, data, last}` without stalling the HBM channels.
+    
   * Navigator Module  
     Encodes the ANN search algorithm as a finite-state machine:
     - issues neighbor-list and vector fetches via the NoC  
     - updates candidate pools and top-k results  
-    - terminates when the search budget (steps / visited nodes) is reached  
+    - terminates when the search budget visited nodes is reached  
 
 ### Multi-Query Execution
 
   * Multi-Navigator Organization  
     Instantiates `N_nav` Navigator pipelines, each bound to one query at a time.
-    A simple dispatcher assigns incoming queries to idle Navigators.
+    A simple query manager assigns queries to idle Navigators.
 
   * Backpressure and Flow Control  
     Each Navigator observes NoC and HBM-ready signals and throttles its own requests when congestion occurs, ensuring fairness across queries.
@@ -59,18 +56,18 @@ Multiple hardware Navigator modules cooperate over an HBM-aware NoC to achieve h
 
   * Topology  
     FPGA-friendly indirect-grid–style NoC between `N_nav` Navigators (sources) and `N_ch` HBM channels (sinks).  
-    The mid-plane is sparsified and assisted by small “miniswitch” blocks so that random many-to-many traffic can be sustained with fewer routers and queues. :contentReference[oaicite:1]{index=1}
+    The mid-plane is sparsified and assisted by small “miniswitch” blocks so that random many-to-many traffic can be sustained with fewer routers and queues.
 
   * Routing & Deadlock Freedom  
-    Deterministic XY routing (X then Y) with packet-level arbitration ensures deadlock-free operation and preserves in-order delivery per (Navigator, HBM-channel) flow. :contentReference[oaicite:2]{index=2}
+    Deterministic XY routing (X then Y) with packet-level arbitration ensures deadlock-free operation and preserves in-order delivery per (Navigator, HBM-channel) flow.
 
   * Queues and Arbitration  
     - Per-output or per-destination VOQs to avoid head-of-line blocking under random destinations  
     - Round-robin arbitration at routers and miniswitches  
-    This combination keeps throughput close to the per-channel service limit even when requests show high entropy. :contentReference[oaicite:3]{index=3}
+    This combination keeps throughput close to the per-channel service limit even when requests show high entropy.
 
   * FPGA-Aware Floorplanning  
-    Routers and miniswitches are placed near Navigator and HBM endpoints, with short, pipelined links across SLR boundaries to sustain the target clock frequency. :contentReference[oaicite:4]{index=4}
+    Routers and miniswitches are placed near Navigator and HBM endpoints, with short, pipelined links across SLR boundaries to sustain the target clock frequency.
 
 * * *
 
@@ -78,11 +75,7 @@ Multiple hardware Navigator modules cooperate over an HBM-aware NoC to achieve h
 
 The full-FPGA accelerator is organized as follows:
 
-  * Host Interface  
-    - Receives batched queries from the host and writes them into on-board buffers  
-    - Reads back top-k results after FPGA-side search completes  
-
-  * Query Dispatcher  
+  * Query Manager  
     - Tracks the state of each Navigator (idle / busy)  
     - Assigns new queries to idle Navigators and collects their final results  
 
