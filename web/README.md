@@ -99,18 +99,3 @@ The full-FPGA accelerator is organized as follows:
     - Layout is aligned with NoC routing to balance load across channels
 
 * * *
-
-## Evaluation Summary
-
-  * Target Datasets  
-    - SIFT / SPACEV with up to XX M vectors  
-
-  * Metrics  
-    - QPS, tail latency (p95/p99), recall@k  
-
-  * Key Result  
-    - Full-FPGA + HBM-aware NoC achieves up to **XXX K QPS** while maintaining target recall, thanks to  
-      - parallel Navigators, and  
-      - stable bandwidth from the NoC under random HBM access patterns.
-
-* * *
